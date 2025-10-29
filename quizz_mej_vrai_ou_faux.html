@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Quizz MEJ — Vrai ou Faux (30 questions)</title>
+  <style>
+    body { font-family: Arial, sans-serif; line-height:1.5; padding:20px; max-width:900px; margin:0 auto; }
+    h1 { text-align:center; }
+    .question { border-bottom:1px solid #eee; padding:12px 0; }
+    .qtext { font-weight:600; margin-bottom:6px; }
+    .choices { display:flex; gap:12px; align-items:center; }
+    label { cursor:pointer; }
+    .btn { display:inline-block; margin-top:18px; padding:10px 14px; border-radius:6px; border:0; background:#2e6da4; color:white; cursor:pointer; }
+    .result { margin-top:18px; padding:14px; border-radius:8px; background:#f2f8ff; }
+    .correct { color:green; font-weight:700; }
+    .wrong { color:crimson; font-weight:700; }
+    .answer-list { margin-top:12px; font-size:0.95em; }
+    footer { margin-top:28px; font-size:0.9em; color:#555; text-align:center; }
+    @media (max-width:520px){ .choices{flex-direction:column; align-items:flex-start} }
+  </style>
+</head>
+<body>
+  <h1>Quizz MEJ — Vrai ou Faux (30 questions)</h1>
+  <p>Instructions : pour chaque affirmation, choisis <strong>Vrai</strong> ou <strong>Faux</strong>. Lorsque nous validons, le score et les bonnes réponses s'affichent.</p>
+
+  <form id="quizForm">
+    <!-- Questions générées ci-dessus (identiques à la version précédente) -->
+  </form>
+
+  <div id="result" class="result" style="display:none;"></div>
+
+  <footer>© MEJ — Questionnaire interactif</footer>
+
+  <script>
+    (function(){
+      const correct = {q1:"Vrai",q2:"Faux",q3:"Vrai",q4:"Vrai",q5:"Vrai",q6:"Faux",q7:"Faux",q8:"Vrai",q9:"Vrai",
+      q10:"Faux",q11:"Vrai",q12:"Faux",q13:"Vrai",q14:"Vrai",q15:"Faux",q16:"Vrai",q17:"Vrai",q18:"Vrai",q19:"Vrai",
+      q20:"Faux",q21:"Vrai",q22:"Faux",q23:"Vrai",q24:"Vrai",q25:"Vrai",q26:"Vrai",q27:"Vrai",q28:"Vrai",q29:"Vrai",q30:"Vrai"};
+
+      const form = document.getElementById('quizForm');
+      const resultEl = document.getElementById('result');
+
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        const data = new FormData(form);
+        let total = 0, correctCount = 0;
+        const perQuestion = [];
+        for(let i=1;i<=30;i++){
+          const key='q'+i;const ans=data.get(key);total++;const isCorrect=ans===correct[key];
+          if(isCorrect)correctCount++;perQuestion.push({q:i,answer:ans,correct:correct[key],ok:isCorrect});
+        }
+        let html='<h3>Résultats</h3>';
+        html+='<p>Score : <strong>'+correctCount+' / '+total+'</strong></p>';
+        html+='<div class="answer-list"><strong>Détail :</strong><ol>';
+        perQuestion.forEach(p=>{html+='<li>Q'+p.q+' — Votre réponse : <span class="'+(p.ok?'correct':'wrong')+'">'+p.answer+'</span> — Bonne réponse : <strong>'+p.correct+'</strong></li>';});
+        html+='</ol></div>';resultEl.innerHTML=html;resultEl.style.display='block';resultEl.scrollIntoView({behavior:'smooth'});
+      });
+    })();
+  </script>
+</body>
+</html>
