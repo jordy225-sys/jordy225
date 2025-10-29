@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz MEJ - Vrai ou Faux</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .question-card.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .question-card.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .question-number {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+        
+        .question-text {
+            font-size: 12px;
+            color: #333;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 6px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        
+        .btn-vrai {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-faux {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .score-section {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        
+        .score {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .reset-btn {
+            background: white;
+            color: #667eea;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        
+        .reset-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 10px;
+            }
+            .container {
+                box-shadow: none;
+                padding: 15px;
+            }
+            .btn, .reset-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Quiz MEJ - Vrai ou Faux</h1>
+        <p class="subtitle">Historique du MEJ : Du XIXème siècle à nos jours</p>
+        
+        <div class="quiz-grid" id="quizContainer"></div>
+        
+        <div class="score-section">
+            <div>Score actuel</div>
+            <div class="score" id="score">0 / 30</div>
+            <button class="reset-btn" onclick="resetQuiz()">🔄 Recommencer</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {q: "Le MEJ est né d'un désir de jeunes religieux jésuites de partir en mission", a: true},
+            {q: "L'Apostolat de la Prière a été fondé au 18ème siècle", a: false},
+            {q: "L'histoire du MEJ commence le 3 décembre 1844", a: true},
+            {q: "Le Père François Xavier Gautrelet était le père spirituel des étudiants jésuites à Vals", a: true},
+            {q: "Vals se trouve dans le sud de la France", a: false},
+            {q: "Sainte Thérèse de Lisieux a intégré l'Apostolat de la Prière à 12 ans", a: true},
+            {q: "La Croisade Eucharistique a été créée en 1915", a: true},
+            {q: "Les pères BESIRE et ROSSELLI ont créé la Croisade Eucharistique", a: true},
+            {q: "La Croisade Eucharistique regroupait près de 500 000 enfants", a: false},
+            {q: "Les croisés étaient des enfants de 6 à 12 ans", a: true},
+            {q: "Le père ARBELLOT a introduit les fiches d'initiation en 1945", a: true},
+            {q: "Les Chevaliers du Christ étaient destinés aux filles", a: false},
+            {q: "Le pape Jean XXIII a suggéré le nom Mouvement Eucharistique", a: true},
+            {q: "3522 délégués se sont retrouvés à Rome en avril 1960", a: true},
+            {q: "Le MEJ est officiellement né en 1962", a: true},
+            {q: "Les croisés ont été baptisés Feux Nouveaux en 1965", a: true},
+            {q: "La prière MEJ a été composée par le père Jean Latarpie", a: true},
+            {q: "L'Equipe Apostolique (EA) a été créée en 1974", a: true},
+            {q: "L'Equipe Espérance (ES) est née en septembre 1981", a: true},
+            {q: "Le premier Congrès International du MEJ a eu lieu à Madrid en 2012", a: false},
+            {q: "Le MEJ est présent dans 92 pays", a: true},
+            {q: "Le Réseau Mondial de Prière compte plus de 22 millions de catholiques", a: true},
+            {q: "Le MEJ est arrivé en Côte d'Ivoire en 1970", a: true},
+            {q: "Le MEJ a pris son essor en Côte d'Ivoire à partir de Bouaké", a: false},
+            {q: "Les Pères DAH FELIX et KANSE BERNARD ont introduit le MEJ en Côte d'Ivoire", a: true},
+            {q: "Le MEJ s'appelait JTC (Jeunes Témoins du Christ) en Côte d'Ivoire", a: true},
+            {q: "Le MEJ est officiellement reconnu dans 9 diocèses en Côte d'Ivoire", a: false},
+            {q: "Le MEJ est arrivé à Yopougon en 1988", a: true},
+            {q: "Le MEJ arrive à Saint Jean Paul 2 Agbayaté en 2024", a: true},
+            {q: "L'application Click To Pray a été confiée au MEJ lors du centenaire", a: true}
+        ];
+
+        let answered = new Array(30).fill(false);
+        let correct = 0;
+
+        function createQuiz() {
+            const container = document.getElementById('quizContainer');
+            questions.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q${index}`;
+                card.innerHTML = `
+                    <div class="question-number">Question ${index + 1}</div>
+                    <div class="question-text">${q.q}</div>
+                    <div class="buttons">
+                        <button class="btn btn-vrai" onclick="checkAnswer(${index}, true)">✓ VRAI</button>
+                        <button class="btn btn-faux" onclick="checkAnswer(${index}, false)">✗ FAUX</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function checkAnswer(index, userAnswer) {
+            if (answered[index]) return;
+            
+            answered[index] = true;
+            const card = document.getElementById(`q${index}`);
+            const buttons = card.querySelectorAll('.btn');
+            
+            if (userAnswer === questions[index].a) {
+                card.classList.add('correct');
+                correct++;
+            } else {
+                card.classList.add('incorrect');
+            }
+            
+            buttons.forEach(btn => btn.disabled = true);
+            updateScore();
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = `${correct} / 30`;
+        }
+
+        function resetQuiz() {
+            answered.fill(false);
+            correct = 0;
+            document.querySelectorAll('.question-card').forEach(card => {
+                card.classList.remove('correct', 'incorrect');
+                card.querySelectorAll('.btn').forEach(btn => btn.disabled = false);
+            });
+            updateScore();
+        }
+
+        createQuiz();
+    </script>
+</body>
+</html>
